@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sayı Tahmin Oyunu</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+
+<h2>Sayı Tahmin Oyunu</h2>
+
+<select id="difficulty">
+    <option value="kolay">Kolay</option>
+    <option value="orta">Orta</option>
+    <option value="zor">Zor</option>
+</select>
+
+<button onclick="startGame()">Başlat</button>
+
+<br><br>
+
+<input type="number" id="guessInput" placeholder="Tahmin Gir">
+<button onclick="checkGuess()">Tahmin Et</button>
+
+<br><br>
+
+<button onclick="restartGame()">Yeniden Oyna</button>
+
+<pre id="output"></pre>
+
+<script src="game.js"></script>
+
+</body>
+</html>
