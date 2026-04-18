@@ -7,28 +7,36 @@
     <link rel="stylesheet" href="../../style.css">
 </head>
 
-<body>
+<body class="guess-page">
 
-<h2>Sayı Tahmin Oyunu</h2>
+<main class="guess-game">
+    <section class="guess-hero" aria-label="Sayı tahmin oyunu">
+        <div class="number-badge">?</div>
+        <h2>Sayı Tahmin Oyunu</h2>
+        <p>Aklımdaki sayıyı bul. Zorluğu seç, tahminini gir, ipuçlarını takip et.</p>
+    </section>
 
-<select id="difficulty">
-    <option value="kolay">Kolay</option>
-    <option value="orta">Orta</option>
-    <option value="zor">Zor</option>
-</select>
+    <section class="game-panel">
+        <div class="control-row">
+            <span class="difficulty-label">Zorluk</span>
+            <div class="difficulty-buttons" id="difficulty">
+                <button class="difficulty-btn active" type="button" data-difficulty="kolay" onclick="selectDifficulty(this)">Kolay</button>
+                <button class="difficulty-btn" type="button" data-difficulty="orta" onclick="selectDifficulty(this)">Orta</button>
+                <button class="difficulty-btn" type="button" data-difficulty="zor" onclick="selectDifficulty(this)">Zor</button>
+            </div>
+            <button class="btn btn-primary" onclick="startGame()">Başlat</button>
+        </div>
 
-<button onclick="startGame()">Başlat</button>
+        <div class="guess-row">
+            <input type="number" id="guessInput" placeholder="Tahmin gir">
+            <button class="btn btn-accent" onclick="checkGuess()">Tahmin Et</button>
+        </div>
 
-<br><br>
+        <button class="btn btn-secondary" onclick="restartGame()">Yeniden Oyna</button>
 
-<input type="number" id="guessInput" placeholder="Tahmin Gir">
-<button onclick="checkGuess()">Tahmin Et</button>
-
-<br><br>
-
-<button onclick="restartGame()">Yeniden Oyna</button>
-
-<pre id="output"></pre>
+        <pre id="output" class="game-output"></pre>
+    </section>
+</main>
 
 <script src="game.js"></script>
 

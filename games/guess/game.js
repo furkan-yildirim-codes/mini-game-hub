@@ -20,7 +20,7 @@ let count;
 let gameStarted = false;
 
 function startGame() {
-    difficulty = document.getElementById("difficulty").value;
+    difficulty = document.querySelector(".difficulty-btn.active").dataset.difficulty;
 
     if (difficulty === "kolay") maxNumber = 50;
     else if (difficulty === "orta") maxNumber = 100;
@@ -92,6 +92,14 @@ function checkGuess() {
 
 function restartGame() {
     startGame();
+}
+
+function selectDifficulty(button) {
+    document.querySelectorAll(".difficulty-btn").forEach((difficultyButton) => {
+        difficultyButton.classList.remove("active");
+    });
+
+    button.classList.add("active");
 }
 
 function print(text) {
