@@ -20,6 +20,26 @@ let count;
 let gameStarted = false;
 let outputTimer;
 
+document.addEventListener("DOMContentLoaded", () => {
+    print("\nHoşgeldin kanka, Başlat'a bas da senin için bir sayı tutayım...");
+
+    const exitButton = document.getElementById("exitButton");
+
+    exitButton.addEventListener("click", (event) => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) {
+            return;
+        }
+
+        event.preventDefault();
+        exitButton.classList.add("exiting");
+        document.body.classList.add("is-exiting");
+
+        setTimeout(() => {
+            window.location.href = exitButton.href;
+        }, 1100);
+    });
+});
+
 function startGame() {
     difficulty = document.querySelector(".difficulty-btn.active").dataset.difficulty;
 

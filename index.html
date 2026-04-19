@@ -17,5 +17,23 @@
     </a>
 </div>
 
+<script>
+    document.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("click", (event) => {
+            if (event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) {
+                return;
+            }
+
+            event.preventDefault();
+            card.classList.add("launching");
+            document.body.classList.add("is-launching");
+
+            setTimeout(() => {
+                window.location.href = card.href;
+            }, 1100);
+        });
+    });
+</script>
+
 </body>
 </html>

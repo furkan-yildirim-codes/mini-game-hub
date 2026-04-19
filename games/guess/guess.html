@@ -13,7 +13,7 @@
     <section class="guess-hero" aria-label="Sayı tahmin oyunu">
         <div class="number-badge">?</div>
         <h2>Sayı Tahmin Oyunu</h2>
-        <p>Aklımdaki sayıyı bul. Zorluğu seç, tahminini gir, ipuçlarını takip et.</p>
+        <p>Aklımdaki sayıyı bul. Zorluğu seç, Tahminini gir, İpuçlarını takip et.</p>
     </section>
 
     <section class="game-panel">
@@ -32,7 +32,10 @@
             <button class="btn btn-accent" onclick="checkGuess()">Tahmin Et</button>
         </div>
 
-        <button class="btn btn-secondary" onclick="restartGame()">Yeniden Oyna</button>
+        <div class="panel-actions">
+            <button class="btn btn-secondary" onclick="restartGame()">Yeniden Oyna</button>
+            <a class="btn btn-exit" id="exitButton" href="../../index.html">Çıkış</a>
+        </div>
 
         <pre id="output" class="game-output"></pre>
     </section>
