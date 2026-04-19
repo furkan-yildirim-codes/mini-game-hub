@@ -19,9 +19,22 @@ let guess;
 let count;
 let gameStarted = false;
 let outputTimer;
+let nextHardHintAt;
+
+const difficultyMessages = {
+    kolay: "\nKolay Modu Aktif, aralığımız dar ve sana bolca ipucu verecem,sakin ve keyifli bir seçenek, hazırsan Başlat butonuna bas...",
+    orta: "\nOrta Modu Aktif, aralığımız biraz daha geniş ve ipuçların daha seyrek olacak, biraz daha zorlayıcı bir seçenek, hazırsan Başlat butonuna bas...",
+    zor: "\nZor Modu Aktif, aralığın çok geniş ve ipuçların çok sınırlı, gerçekten maceracılara göre bir tercih, şimdiden seni sinirlendireceğim için özür diliyorum👻 hazırsan Başlat butonuna bas..."
+};
 
 document.addEventListener("DOMContentLoaded", () => {
-    print("\nHoşgeldin kanka, Başlat'a bas da senin için bir sayı tutayım...");
+    print("\nHoşgeldin kanka, bir zorluk şeç ve sayıların dünyasına giriş yap🚀Bol şans...");
+
+    document.getElementById("guessInput").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            checkGuess();
+        }
+    });
 
     const exitButton = document.getElementById("exitButton");
 
@@ -41,14 +54,22 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function startGame() {
-    difficulty = document.querySelector(".difficulty-btn.active").dataset.difficulty;
+    const selectedDifficulty = document.querySelector(".difficulty-btn.active");
 
-    if (difficulty === "kolay") maxNumber = 50;
-    else if (difficulty === "orta") maxNumber = 100;
+    if (!selectedDifficulty) {
+        print("\nÖnce bir zorluk seçmen gerekiyor kanka.");
+        return;
+    }
+
+    difficulty = selectedDifficulty.dataset.difficulty;
+
+    if (difficulty === "kolay") maxNumber = 100;
+    else if (difficulty === "orta") maxNumber = 250;
     else maxNumber = 500;
 
     secretNumber = Math.floor(Math.random() * maxNumber) + 1;
     count = 1;
+    nextHardHintAt = getNextHardHintTurn();
     gameStarted = true;
     document.getElementById("guessInput").value = "";
 
@@ -77,11 +98,11 @@ function checkGuess() {
     }
 
     if (guess < secretNumber) {
-        print("\nDaha büyük bir sayı söyle kanka");
+        print(getWrongGuessMessage("büyük"), difficulty === "zor");
         count++;
         clearGuessInput();
     } else if (guess > secretNumber) {
-        print("\nDaha küçük bir sayı söyle kanka");
+        print(getWrongGuessMessage("küçük"), difficulty === "zor");
         count++;
         clearGuessInput();
     } else {
@@ -121,14 +142,16 @@ function selectDifficulty(button) {
     });
 
     button.classList.add("active");
+    print(difficultyMessages[button.dataset.difficulty], button.dataset.difficulty === "zor");
 }
 
-function print(text) {
+function print(text, isDanger = false) {
     const output = document.getElementById("output");
     let index = 0;
 
     clearInterval(outputTimer);
     output.innerText = "";
+    output.classList.toggle("danger-output", isDanger);
     output.classList.add("is-typing");
 
     outputTimer = setInterval(() => {
@@ -144,4 +167,132 @@ function print(text) {
 
 function clearGuessInput() {
     document.getElementById("guessInput").value = "";
+}
+
+function getEasyModeHint() {
+    if (difficulty !== "kolay" || count !== 2) {
+        return "";
+    }
+
+    const numberType = secretNumber % 2 === 0 ? "çift" : "tek";
+    const typeHints = [
+        `\nKüçük ipucu: Tuttuğum sayı ${numberType}.`,
+        `\nBonus yardım: Sayı ${numberType} çıktı kanka.`,
+        `\nKolay moddan ekstra kıyak: Aradığın sayı ${numberType}.`,
+        `\nBir sır daha vereyim: Sayının tipi ${numberType}.`,
+        `\nYaklaşman için küçük bilgi: Tuttuğum sayı ${numberType}.`
+    ];
+
+    return typeHints[Math.floor(Math.random() * typeHints.length)];
+}
+
+function getWrongGuessMessage(direction) {
+    if (difficulty === "zor") {
+        return getHardModeMessage(direction);
+    }
+
+    if (difficulty === "orta") {
+        return getMediumModeMessage(direction);
+    }
+
+    return getEasyModeMessage(direction);
+}
+
+function getEasyModeMessage(direction) {
+    const easyHints = [
+        `\nDaha ${direction} bir sayı söyle kanka`,
+        `\nBiraz daha ${direction} git, yaklaşıyoruz.`,
+        `\nYön belli: Daha ${direction} bir tahmin lazım.`,
+        `\nKolay mod kıyağı: Sayı daha ${direction} tarafta.`,
+        `\nGüzel deneme, ama daha ${direction} düşün.`,
+        `\nAzıcık rota değiştir: Daha ${direction}.`,
+        `\nBu sayı senden daha ${direction} bir tahmin bekliyor.`
+    ];
+
+    return easyHints[Math.floor(Math.random() * easyHints.length)] + getEasyModeHint();
+}
+
+function getMediumModeMessage(direction) {
+    if (count % 2 === 0) {
+        const hintMessages = [
+            `\nOrta mod ipucu zamanı: Daha ${direction} bir sayı söyle.`,
+            `\nTamam, biraz yardım edeyim: Daha ${direction}.`,
+            `\nYön belli oldu kanka: Daha ${direction} tarafa git.`,
+            `\nİkinci denemenin hakkı: Daha ${direction} bir sayı lazım.`,
+            `\nOrta moddan küçük bir kıyak: Daha ${direction}.`,
+            `\nBu sefer yönü söylüyorum: Daha ${direction} düşün.`,
+            `\nİpucu geldi, dikkatli kullan: Daha ${direction}.`,
+            `\nBiraz yaklaştırayım seni: Daha ${direction} tarafta ara.`,
+            `\nTam ortadan konuşuyorum: Daha ${direction} bir tahmin lazım.`
+        ];
+
+        return hintMessages[Math.floor(Math.random() * hintMessages.length)];
+    }
+
+    const mildTaunts = [
+        "\nKolay moddan bir farkımız olsun di mi?",
+        "\nHemen ipucu yok, orta mod biraz naz yapar.",
+        "\nBir tahmin daha düşün, sonra belki konuşuruz.",
+        "\nBu mod ne çok kolay ne çok acımasız, biraz sabır.",
+        "\nİpucu hemen gelirse orta modun havası kaçar.",
+        "\nFena deneme değil, ama yönü birazdan konuşuruz.",
+        "\nBiraz sezgi, biraz şans; orta modun olayı bu.",
+        "\nŞimdilik yön yok, sadece hafif bir sessizlik.",
+        "\nOrta mod sana hemen sır vermez, ama tamamen de susmaz.",
+        "\nBunu not ettim, ama ipucu için biraz erken.",
+        "\nKolay mod olsaydı şimdi yardım gelmişti, ama burası orta.",
+        "\nBir tahminlik daha sabır, sonra işler değişebilir.",
+        "\nYakın mısın uzak mı, bunu az sonra konuşalım.",
+        "\nTahmin güzel, cevap biraz daha seçici davranıyor.",
+        "\nOrta mod dengeli gider; hemen panik yok."
+    ];
+
+    return mildTaunts[Math.floor(Math.random() * mildTaunts.length)];
+}
+
+function getHardModeMessage(direction) {
+    if (count >= nextHardHintAt) {
+        nextHardHintAt += getNextHardHintTurn();
+        const hintMessages = [
+            `\nTamam tamam, bu seferlik ipucu: Daha ${direction} bir sayı söyle.`,
+            `\nZor modun kapısı aralandı: Daha ${direction} tarafa bak.`,
+            `\nŞanslı günündesin, yön veriyorum: Daha ${direction}.`,
+            `\nBu ipucunu iyi kullan: Sayı daha ${direction} tarafta.`,
+            `\nNadir bir yardım geldi: Daha ${direction} dene.`,
+            `\nSistem acıdı galiba: Daha ${direction} bir sayı lazım.`,
+            `\nKaranlığın içinden bir fısıltı: Daha ${direction}.`
+        ];
+
+        return hintMessages[Math.floor(Math.random() * hintMessages.length)];
+    }
+
+    const taunts = [
+        "\nZor moddasın, sık sık ipucu vereceğimi mi sandın?",
+        "\nBu modun adı boşuna zor değil kanka, biraz sezgi lazım.",
+        "\nİpucu kasası kilitli, şimdilik kendi başınasın.",
+        "\nGüzel deneme ama yön tabelası bugün izinli.",
+        "\nZor mod seni hafif hafif terletmek için burada.",
+        "\nBu tahmine ipucu yok, evren sessiz kalmayı seçti.",
+        "\nYaklaştın mı uzaklaştın mı? İşte asıl macera burada.",
+        "\nBen sayı tuttum, sen de cesaretini topla.",
+        "\nİpucu bekleme kuyruğunda 47. sıradasın gibi düşün.",
+        "\nZor modun duvarları var kanka, merdiveni sen bulacaksın.",
+        "\nBu seferlik sır vermiyorum, tahmin kasların çalışsın.",
+        "\nSayı orada bir yerde, ama pusula şu an tatilde.",
+        "\nBunu bilseydin zaten zor modu seçmezdin, değil mi?",
+        "\nKaranlık tarafta ipuçları taksitle verilir.",
+        "\nŞimdilik sadece şunu söyleyeyim: Yanlış cevap.",
+        "\nBen olsam biraz daha düşünürdüm ama tabii sen bilirsin.",
+        "\nTahminin cesur, sonuç biraz utangaç kaldı.",
+        "\nZor mod bugün çok konuşkan değil, şaşırtıcı olmadı.",
+        "\nSayı seni duydu ama cevap vermemeyi seçti.",
+        "\nİpucu perisi şu an molada, kahvesi bitince bakarız.",
+        "\nBu kapıdan ipucu çıkmadı, diğer tahmine geçelim."
+    ];
+
+    return taunts[Math.floor(Math.random() * taunts.length)];
+}
+
+function getNextHardHintTurn() {
+    return Math.random() < 0.5 ? 3 : 4;
 }
