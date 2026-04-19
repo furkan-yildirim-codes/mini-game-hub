@@ -18,6 +18,7 @@ let secretNumber;
 let guess;
 let count;
 let gameStarted = false;
+let outputTimer;
 
 function startGame() {
     difficulty = document.querySelector(".difficulty-btn.active").dataset.difficulty;
@@ -31,7 +32,7 @@ function startGame() {
     gameStarted = true;
     document.getElementById("guessInput").value = "";
 
-    print(`\nOyun başladı!\n1 ile ${maxNumber} arasında sayı tahmin et`);
+    print(`\nOyun başladı!\n1 ile ${maxNumber} arasında bir sayı tahmin et`);
 }
 
 function checkGuess() {
@@ -43,7 +44,7 @@ function checkGuess() {
     let input = document.getElementById("guessInput").value;
 
     if (input === "") {
-        print("\nSayı girmen gerekiyor dostum!");
+        print("\nYalnızca sayı girmen gerekiyor dostum!");
         return;
     }
 
@@ -77,12 +78,12 @@ function checkGuess() {
             text += `\n${difficulty} modundaki en iyi skorun : ${bestScore[difficulty]}`;
         }
 
-        text += `\n\n🏆 ${difficulty.toUpperCase()} modu skor tablosu:\n`;
+        text += `\n\n🏆 ${difficulty.toUpperCase()} Modu Skor Tablosu:\n`;
 
         let topScores = scores[difficulty].slice(0, 3);
 
         topScores.forEach((score, i) => {
-            text += `${i + 1}. ${score} tahmin\n`;
+            text += `${i + 1}. ${score} Tahmin\n`;
         });
 
         print(text);
@@ -103,7 +104,22 @@ function selectDifficulty(button) {
 }
 
 function print(text) {
-    document.getElementById("output").innerText = text;
+    const output = document.getElementById("output");
+    let index = 0;
+
+    clearInterval(outputTimer);
+    output.innerText = "";
+    output.classList.add("is-typing");
+
+    outputTimer = setInterval(() => {
+        output.innerText += text[index];
+        index++;
+
+        if (index >= text.length) {
+            clearInterval(outputTimer);
+            output.classList.remove("is-typing");
+        }
+    }, 24);
 }
 
 function clearGuessInput() {
