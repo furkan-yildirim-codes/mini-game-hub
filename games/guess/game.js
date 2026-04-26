@@ -28,7 +28,7 @@ const difficultyMessages = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    print("\nHoşgeldin kanka, bir zorluk şeç ve sayıların dünyasına giriş yap🚀Bol şans...");
+    print("\nHoşgeldin kanka, süreli oynamak istiyorsan sayacı aktif et ve bir zorluk seç,ardından sayıların dünyasına giriş yap🚀Bol şans...");
     setupCountdown();
 
     document.getElementById("guessInput").addEventListener("keydown", (event) => {
@@ -63,39 +63,14 @@ function setupCountdown() {
         return;
     }
 
-    function getNextMidnight() {
-        const target = new Date();
-        target.setHours(24, 0, 0, 0);
-        return target;
-    }
-
-    let countdownTarget = getNextMidnight();
-
-    function updateCountdown() {
-        const now = new Date();
-        let diff = countdownTarget - now;
-
-        if (diff <= 0) {
-            countdownTarget = getNextMidnight();
-            diff = countdownTarget - now;
-        }
-
-        const totalSeconds = Math.floor(diff / 1000);
-        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-        const seconds = String(totalSeconds % 60).padStart(2, "0");
-
-        countdownTime.textContent = `${hours}:${minutes}:${seconds}`;
-    }
 
     countdownToggle.addEventListener("click", () => {
         const isOpen = countdownWidget.classList.toggle("is-open");
         countdownToggle.textContent = isOpen ? "Sayacı Kapat" : "Sayacı Aç";
         countdownToggle.setAttribute("aria-expanded", String(isOpen));
+        print(isOpen ? "\nSayaç Aktif, zor bir tecrübe istiyorsun anlaşılan🥶 Bir zorluk seç..." : "\nSayaç Kapandı, biraz basit seviyoruz galiba🙂‍↕️, Bir zorluk seç...​");
     });
 
-    updateCountdown();
-    window.setInterval(updateCountdown, 1000);
 }
 
 function startGame() {
