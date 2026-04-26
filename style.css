@@ -65,6 +65,181 @@ h1 {
   line-height: 1.2;
 }
 
+.countdown-widget {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.countdown-toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.countdown-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(30, 41, 59, 0.96);
+}
+
+.countdown-content {
+  min-width: 170px;
+  padding: 12px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+  text-align: right;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transform-origin: bottom left;
+  max-height: 180px;
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease,
+    max-height 0.24s ease,
+    padding 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.countdown-widget:not(.is-open) .countdown-content {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-color: rgba(255, 255, 255, 0);
+  pointer-events: none;
+}
+
+.countdown-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.countdown-time {
+  display: block;
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1;
+  text-shadow: 0 0 16px rgba(20, 184, 166, 0.34);
+}
+
+.guess-page .countdown-widget {
+  position: static;
+  width: min(860px, 100%);
+  margin: 0 0 14px;
+  padding: 0 18px;
+  align-items: stretch;
+  transition: transform 0.24s ease;
+}
+
+.guess-page .countdown-content {
+  position: relative;
+  min-width: 0;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.72)),
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.22), transparent 42%);
+  box-shadow:
+    0 24px 48px rgba(8, 13, 28, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.guess-page .countdown-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(20, 184, 166, 0.18), rgba(244, 63, 94, 0.08));
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.guess-page .countdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  padding: 11px 16px;
+  background: linear-gradient(135deg, #14b8a6, #0f766e);
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow:
+    0 16px 32px rgba(15, 118, 110, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    margin 0.24s ease;
+}
+
+.guess-page .countdown-toggle:hover {
+  background: linear-gradient(135deg, #1ac7b4, #0f8b81);
+  box-shadow:
+    0 18px 34px rgba(15, 118, 110, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.guess-page .countdown-widget:not(.is-open) {
+  transform: translateY(-2px);
+}
+
+.guess-page .countdown-widget:not(.is-open) .countdown-toggle {
+  padding-inline: 18px;
+  box-shadow:
+    0 18px 34px rgba(8, 13, 28, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.guess-page .countdown-label,
+.guess-page .countdown-time {
+  position: relative;
+  z-index: 1;
+}
+
+.guess-page .countdown-label {
+  margin-bottom: 10px;
+  color: #d9f6f2;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.guess-page .countdown-time {
+  font-size: clamp(30px, 5vw, 40px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-shadow:
+    0 0 24px rgba(20, 184, 166, 0.28),
+    0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
 .games {
   display: flex;
   flex-wrap: wrap;
@@ -463,6 +638,29 @@ h1 {
 }
 
 @media (max-width: 760px) {
+  .countdown-widget {
+    top: 14px;
+    right: 14px;
+  }
+
+  .countdown-content {
+    min-width: 154px;
+  }
+
+  .countdown-time {
+    font-size: 24px;
+  }
+
+  .guess-page .countdown-widget {
+    padding: 0 14px;
+    margin-bottom: 12px;
+  }
+
+  .guess-page .countdown-content {
+    padding: 16px 18px;
+    border-radius: 18px;
+  }
+
   body.is-launching::after,
   body.is-exiting::after {
     width: min(320px, calc(100% - 32px));
@@ -510,6 +708,34 @@ h1 {
 }
 
 @media (max-width: 560px) {
+  .countdown-widget {
+    left: 12px;
+    right: 12px;
+    align-items: stretch;
+  }
+
+  .countdown-toggle,
+  .countdown-content {
+    width: 100%;
+  }
+
+  .countdown-content {
+    text-align: center;
+  }
+
+  .guess-page .countdown-widget {
+    padding: 0 12px;
+  }
+
+  .guess-page .countdown-toggle {
+    margin-top: 12px;
+  }
+
+  .guess-page .countdown-content {
+    text-align: center;
+    padding: 18px 16px 16px;
+  }
+
   .guess-page {
     padding: 18px 12px;
   }

@@ -10,11 +10,21 @@
 
 <body class="guess-page">
 
+<div class="countdown-widget is-open" id="countdownWidget" aria-live="polite">
+    <div class="countdown-content">
+        <span class="countdown-label">Günün Bitmesine</span>
+        <strong class="countdown-time" id="countdownTime">00:00:00</strong>
+    </div>
+</div>
+
 <main class="guess-game">
     <section class="guess-hero" aria-label="Sayı tahmin oyunu">
         <div class="number-badge">?</div>
         <h2>Sayı Tahmin Oyunu</h2>
         <p>Aklımdaki sayıyı bul. Zorluğu seç, Tahminini gir, İpuçlarını takip et.</p>
+        <button type="button" class="countdown-toggle" id="countdownToggle" aria-expanded="true">
+            Sayacı Kapat
+        </button>
     </section>
 
     <section class="game-panel">
