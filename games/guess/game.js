@@ -20,15 +20,23 @@ let count;
 let gameStarted = false;
 let outputTimer;
 let nextHardHintAt;
+let countdownWidget;
+let countdownToggle;
+let countdownReset;
+let countdownTime;
+let countdownInterval;
+let countdownSeconds = 0;
+let countdownUnlockTimer;
+let countdownAnimateTimer;
 
 const difficultyMessages = {
-    kolay: "\nKolay Modu Aktif, aralığımız dar ve sana bolca ipucu verecem,sakin ve keyifli bir seçenek, hazırsan Başlat butonuna bas...",
+    kolay: "\nKolay Modu Aktif, aralığımız dar ve sana bolca ipucu vereceğim,sakin ve keyifli bir seçenek, hazırsan Başlat butonuna bas...",
     orta: "\nOrta Modu Aktif, aralığımız biraz daha geniş ve ipuçların daha seyrek olacak, biraz daha zorlayıcı bir seçenek, hazırsan Başlat butonuna bas...",
     zor: "\nZor Modu Aktif, aralığın çok geniş ve ipuçların çok sınırlı, gerçekten maceracılara göre bir tercih, şimdiden seni sinirlendireceğim için özür diliyorum👻 hazırsan Başlat butonuna bas..."
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    print("\nHoşgeldin kanka, süreli oynamak istiyorsan sayacı aktif et ve bir zorluk seç,ardından sayıların dünyasına giriş yap🚀Bol şans...");
+    print("\nHoşgeldin kanka, süreli oynamak istiyorsan sayacı aktif et veya bir zorluk seç,ardından sayıların dünyasına giriş yap🚀Bol şans...");
     setupCountdown();
 
     document.getElementById("guessInput").addEventListener("keydown", (event) => {
@@ -55,21 +63,31 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupCountdown() {
-    const countdownWidget = document.getElementById("countdownWidget");
-    const countdownToggle = document.getElementById("countdownToggle");
-    const countdownTime = document.getElementById("countdownTime");
+    countdownWidget = document.getElementById("countdownWidget");
+    countdownToggle = document.getElementById("countdownToggle");
+    countdownReset = document.getElementById("countdownReset");
+    countdownTime = document.getElementById("countdownTime");
 
-    if (!countdownWidget || !countdownToggle || !countdownTime) {
+    if (!countdownWidget || !countdownToggle || !countdownReset || !countdownTime) {
         return;
     }
 
 
     countdownToggle.addEventListener("click", () => {
+        if (gameStarted) {
+            print("\nOyun sırasında sayacı açıp,kapatmazsın⛔​");
+            return;
+        }
         const isOpen = countdownWidget.classList.toggle("is-open");
         countdownToggle.textContent = isOpen ? "Sayacı Kapat" : "Sayacı Aç";
         countdownToggle.setAttribute("aria-expanded", String(isOpen));
-        print(isOpen ? "\nSayaç Aktif, zor bir tecrübe istiyorsun anlaşılan🥶 Bir zorluk seç..." : "\nSayaç Kapandı, biraz basit seviyoruz galiba🙂‍↕️, Bir zorluk seç...​");
+        if (isOpen && document.querySelector(".difficulty-btn.active") && !gameStarted) {
+            resetEasyCountdown();
+        }
+        print(isOpen ? "\nSayaç Aktif, zor bir tecrübe istiyorsun anlaşılan🥶" : "\nSayaç Kapandı, biraz basit seviyoruz galiba🙂‍↕️​");
     });
+
+    countdownReset.addEventListener("click", resetGameState);
 
 }
 
@@ -92,6 +110,15 @@ function startGame() {
     nextHardHintAt = getNextHardHintTurn();
     gameStarted = true;
     document.getElementById("guessInput").value = "";
+
+    if (countdownWidget?.classList.contains("is-open")) {
+        startEasyCountdown();
+    } else {
+        clearEasyCountdown();
+    }
+
+    syncCountdownLock();
+    syncDifficultyLock();
 
     print(`\nOyun başladı!\n1 ile ${maxNumber} arasında bir sayı tahmin et`);
 }
@@ -126,6 +153,7 @@ function checkGuess() {
         count++;
         clearGuessInput();
     } else {
+        stopEasyCountdown();
         let text = "\nTebrikler! Doğru bildin 🎉";
         text += `\nTahmin sayın: ${count}\n`;
 
@@ -149,20 +177,216 @@ function checkGuess() {
 
         print(text);
         gameStarted = false;
+        syncCountdownLock();
+        syncDifficultyLock();
     }
 }
 
 function restartGame() {
+    stopEasyCountdown();
     startGame();
 }
 
 function selectDifficulty(button) {
+    if (gameStarted) {
+        print("\nOyun sırasında modu değiştiremezsin⛔​");
+        return;
+    }
+
     document.querySelectorAll(".difficulty-btn").forEach((difficultyButton) => {
         difficultyButton.classList.remove("active");
     });
 
     button.classList.add("active");
+    difficulty = button.dataset.difficulty;
+
+    if (countdownWidget?.classList.contains("is-open") && !gameStarted) {
+        resetEasyCountdown();
+    } else if (!gameStarted) {
+        clearEasyCountdown();
+    }
+
     print(difficultyMessages[button.dataset.difficulty], button.dataset.difficulty === "zor");
+}
+
+function formatCountdownTime(totalSeconds) {
+    const safeSeconds = Math.max(totalSeconds, 0);
+    const hours = String(Math.floor(safeSeconds / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((safeSeconds % 3600) / 60)).padStart(2, "0");
+    const seconds = String(safeSeconds % 60).padStart(2, "0");
+
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+function updateCountdownDisplay() {
+    if (!countdownTime) {
+        return;
+    }
+
+    countdownTime.textContent = formatCountdownTime(countdownSeconds);
+}
+
+function animateCountdownDisplay(targetSeconds = countdownSeconds) {
+    if (!countdownTime) {
+        return;
+    }
+
+    clearInterval(countdownAnimateTimer);
+
+    const parts = countdownTime.textContent.split(":").map(Number);
+    let shownSeconds = (parts[0] || 0) * 3600 + (parts[1] || 0) * 60 + (parts[2] || 0);
+    const step = shownSeconds <= targetSeconds ? 2 : -2;
+
+    countdownAnimateTimer = setInterval(() => {
+        if ((step > 0 && shownSeconds >= targetSeconds) || (step < 0 && shownSeconds <= targetSeconds)) {
+            clearInterval(countdownAnimateTimer);
+            countdownTime.textContent = formatCountdownTime(targetSeconds);
+            return;
+        }
+
+        shownSeconds += step;
+
+        if ((step > 0 && shownSeconds > targetSeconds) || (step < 0 && shownSeconds < targetSeconds)) {
+            shownSeconds = targetSeconds;
+        }
+
+        countdownTime.textContent = formatCountdownTime(shownSeconds);
+    }, 28);
+}
+
+function stopEasyCountdown() {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+}
+
+function clearEasyCountdown() {
+    stopEasyCountdown();
+    countdownSeconds = 0;
+    updateCountdownDisplay();
+}
+
+function resetEasyCountdown() {
+    stopEasyCountdown();
+    let targetSeconds;
+
+    if (difficulty === "kolay") {
+        targetSeconds = 90;
+    } else if (difficulty === "orta") {
+        targetSeconds = 60;
+    } else if (difficulty === "zor") {
+        targetSeconds = 45;
+    } else {
+        targetSeconds = 0;
+    }
+
+    countdownSeconds = targetSeconds;
+    animateCountdownDisplay(targetSeconds);
+}
+
+function startEasyCountdown() {
+    resetEasyCountdown();
+
+    countdownInterval = setInterval(() => {
+        countdownSeconds--;
+        updateCountdownDisplay();
+
+        if (countdownSeconds > 0) {
+            return;
+        }
+
+        stopEasyCountdown();
+        gameStarted = false;
+        clearGuessInput();
+        syncDifficultyLock();
+        syncCountdownLock();
+        print("\nSüre bitti kaybettin☠️", true);
+    }, 1000);
+}
+
+function resetGameState() {
+    stopEasyCountdown();
+
+    bestScore = {
+        kolay: null,
+        orta: null,
+        zor: null
+    };
+
+    scores = {
+        kolay: [],
+        orta: [],
+        zor: []
+    };
+
+    difficulty = undefined;
+    maxNumber = undefined;
+    secretNumber = undefined;
+    guess = undefined;
+    count = undefined;
+    nextHardHintAt = undefined;
+    gameStarted = false;
+    countdownSeconds = 0;
+
+    syncCountdownLock();
+    syncDifficultyLock();
+
+    document.querySelectorAll(".difficulty-btn").forEach((difficultyButton) => {
+        difficultyButton.classList.remove("active");
+    });
+
+    document.getElementById("guessInput").value = "";
+    clearInterval(outputTimer);
+
+    countdownWidget.classList.remove("is-open");
+    countdownToggle.textContent = "Sayacı Aç";
+    countdownToggle.setAttribute("aria-expanded", "false");
+    syncCountdownLock();
+    syncDifficultyLock();
+    updateCountdownDisplay();
+
+    print("\nHoşgeldin kanka, süreli oynamak istiyorsan sayacı aktif et veya bir zorluk seç,ardından sayıların dünyasına giriş yap🚀Bol şans...");
+}
+
+function syncCountdownLock() {
+    if (!countdownToggle) {
+        return;
+    }
+
+    clearTimeout(countdownUnlockTimer);
+
+    if (gameStarted) {
+        countdownToggle.classList.remove("is-unlocking");
+        countdownToggle.classList.add("is-locked");
+        return;
+    }
+
+    if (countdownToggle.classList.contains("is-locked")) {
+        countdownToggle.classList.add("is-unlocking");
+        countdownUnlockTimer = setTimeout(() => {
+            countdownToggle.classList.remove("is-unlocking");
+        }, 240);
+    }
+
+    countdownToggle.classList.remove("is-locked");
+}
+
+function syncDifficultyLock() {
+    document.querySelectorAll(".difficulty-btn").forEach((difficultyButton) => {
+        if (gameStarted) {
+            difficultyButton.classList.remove("is-unlocking");
+            difficultyButton.classList.add("is-locked");
+            return;
+        }
+
+        if (difficultyButton.classList.contains("is-locked")) {
+            difficultyButton.classList.add("is-unlocking");
+            setTimeout(() => {
+                difficultyButton.classList.remove("is-unlocking");
+            }, 240);
+        }
+
+        difficultyButton.classList.remove("is-locked");
+    });
 }
 
 function print(text, isDanger = false) {

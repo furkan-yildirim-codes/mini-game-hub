@@ -12,7 +12,7 @@
 
 <div class="countdown-widget" id="countdownWidget" aria-live="polite">
     <div class="countdown-content">
-        <span class="countdown-label">Kalan Süre⏰​</span>
+        <span class="countdown-label">Kalan Süre⏰</span>
         <strong class="countdown-time" id="countdownTime">00:00:00</strong>
     </div>
 </div>
@@ -22,9 +22,14 @@
         <div class="number-badge">?</div>
         <h2>Sayı Tahmin Oyunu</h2>
         <p>Aklımdaki sayıyı bul. Zorluğu seç, Tahminini gir, İpuçlarını takip et.</p>
-        <button type="button" class="countdown-toggle" id="countdownToggle" aria-expanded="false">
-            Sayacı Aç
-        </button>
+        <div class="countdown-actions">
+            <button type="button" class="countdown-toggle" id="countdownToggle" aria-expanded="false">
+                Sayacı Aç
+            </button>
+            <button type="button" class="countdown-toggle countdown-reset" id="countdownReset">
+                Sıfırla
+            </button>
+        </div>
     </section>
 
     <section class="game-panel">

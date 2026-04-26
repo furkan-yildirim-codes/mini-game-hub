@@ -207,6 +207,89 @@ h1 {
     0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
+.guess-page .countdown-toggle.is-locked {
+  position: relative;
+}
+
+.guess-page .countdown-toggle.is-locked::after {
+  content: "🔒";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #0f172a;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28);
+  font-size: 12px;
+  animation: lockPop 0.26s ease;
+}
+
+.guess-page .countdown-toggle.is-unlocking::after {
+  content: "🔒";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #0f172a;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28);
+  font-size: 12px;
+  pointer-events: none;
+  animation: lockFadeOut 0.24s ease forwards;
+}
+
+@keyframes lockPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-18deg);
+  }
+
+  65% {
+    opacity: 1;
+    transform: scale(1.12) rotate(6deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes lockFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.45) rotate(18deg);
+  }
+}
+
+.countdown-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.guess-page .countdown-reset {
+  background: linear-gradient(135deg, #334155, #1e293b);
+  box-shadow:
+    0 16px 32px rgba(15, 23, 42, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.guess-page .countdown-reset:hover {
+  background: linear-gradient(135deg, #475569, #273449);
+}
+
 .guess-page .countdown-widget:not(.is-open) {
   transform: translateY(-2px);
 }
@@ -239,6 +322,7 @@ h1 {
     0 0 24px rgba(20, 184, 166, 0.28),
     0 8px 22px rgba(0, 0, 0, 0.24);
 }
+
 
 .games {
   display: flex;
@@ -472,6 +556,36 @@ h1 {
 
 .difficulty-btn:hover {
   transform: translateY(-1px);
+}
+
+.difficulty-btn.is-locked,
+.difficulty-btn.is-unlocking {
+  position: relative;
+}
+
+.difficulty-btn.is-locked::after,
+.difficulty-btn.is-unlocking::after {
+  content: "🔒";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #0f172a;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.difficulty-btn.is-locked::after {
+  animation: lockPop 0.26s ease;
+}
+
+.difficulty-btn.is-unlocking::after {
+  animation: lockFadeOut 0.24s ease forwards;
 }
 
 .btn {
