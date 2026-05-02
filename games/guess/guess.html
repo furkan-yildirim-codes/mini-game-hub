@@ -29,7 +29,32 @@
             <button type="button" class="countdown-toggle countdown-reset" id="countdownReset">
                 Sıfırla
             </button>
+            <button type="button" class="countdown-toggle countdown-customize" id="customizeToggle" aria-expanded="false">
+                Özelleştir
+            </button>
         </div>
+    </section>
+
+    <section class="custom-panel" id="customPanel" aria-label="Özel oyun ayarları" hidden>
+        <div class="custom-grid">
+            <label>
+                <span>1'den kaça kadar olacağını seç</span>
+                <input type="number" id="customMaxNumber" min="10" max="9999" value="100">
+            </label>
+            <label>
+                <span>Süre (saniye)</span>
+                <input type="number" id="customTimeLimit" min="0" max="3600" value="60">
+            </label>
+            <label>
+                <span>İpucu Durumu</span>
+                <select id="customHintMode">
+                    <option value="always">Her yanlışta ver</option>
+                    <option value="sometimes" selected>Ara sıra ver</option>
+                    <option value="never">Verme</option>
+                </select>
+            </label>
+        </div>
+        <button class="btn btn-primary" type="button" id="applyCustomSettings">Özel Modu Seç</button>
     </section>
 
     <section class="game-panel">

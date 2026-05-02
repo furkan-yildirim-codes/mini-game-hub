@@ -290,6 +290,17 @@ h1 {
   background: linear-gradient(135deg, #475569, #273449);
 }
 
+.guess-page .countdown-customize {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  box-shadow:
+    0 16px 32px rgba(244, 63, 94, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.guess-page .countdown-customize:hover {
+  background: linear-gradient(135deg, #fb5270, #d61b48);
+}
+
 .guess-page .countdown-widget:not(.is-open) {
   transform: translateY(-2px);
 }
@@ -478,6 +489,106 @@ h1 {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(8px);
+}
+
+.custom-panel {
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+  color: #172033;
+}
+
+.custom-panel[hidden] {
+  display: none;
+}
+
+.custom-panel.is-entering {
+  animation: customPanelIn 0.78s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.custom-panel.is-leaving {
+  animation: customPanelOut 0.26s ease both;
+}
+
+@keyframes customPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.98);
+    box-shadow:
+      0 0 0 rgba(20, 184, 166, 0),
+      0 0 0 rgba(244, 63, 94, 0);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow:
+      0 22px 48px rgba(0, 0, 0, 0.28),
+      0 0 28px rgba(20, 184, 166, 0.16);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes customPanelOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+}
+
+.custom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.custom-grid label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #384152;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.custom-grid input,
+.custom-grid select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #cfd7e3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+  font-size: 15px;
+  outline: none;
+}
+
+.custom-grid input {
+  padding: 0 12px;
+}
+
+.custom-grid select {
+  padding: 0 10px;
+}
+
+.custom-grid input:focus,
+.custom-grid select:focus {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.18);
 }
 
 .control-row,
@@ -860,6 +971,14 @@ h1 {
 
   .game-panel {
     padding: 14px;
+  }
+
+  .custom-panel {
+    padding: 14px;
+  }
+
+  .custom-grid {
+    grid-template-columns: 1fr;
   }
 
   .control-row,
